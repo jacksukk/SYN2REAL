@@ -1,0 +1,27 @@
+do_train: True
+overwrite_output_dir: True
+do_eval: True
+output_dir:   # change to a repo name of your choice
+per_device_train_batch_size: 16
+gradient_accumulation_steps: 1  # increase by 2x for every 2x decrease in batch size
+learning_rate: 3.e-5
+weight_decay: 0.1
+run_name: 
+warmup_steps: 500
+max_steps:
+gradient_checkpointing: True
+fp16: True
+evaluation_strategy: "steps"
+per_device_eval_batch_size: 8
+predict_with_generate: True
+generation_max_length: 225
+save_steps: 50
+eval_steps: 50
+logging_steps: 25
+report_to: ["wandb"]
+load_best_model_at_end: True
+metric_for_best_model: "wer"
+greater_is_better: False
+push_to_hub: False
+save_total_limit: 2
+max_steps: 40000
