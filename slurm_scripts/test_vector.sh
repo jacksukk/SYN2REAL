@@ -23,4 +23,4 @@ temp_domain=('music' 'cooking' 'weather' 'social')
 echo ${temp_domain[$SLURM_ARRAY_TASK_ID-1]};
 sleep $(((SLURM_ARRAY_TASK_ID-1)*60));
 
-python test.py --model_syn_anti outputs/whisper_slurp_${temp_domain[$SLURM_ARRAY_TASK_ID-1]}_anti_synthetic_speech_t5_small/ --model_anti outputs/whisper_slurp_${temp_domain[$SLURM_ARRAY_TASK_ID-1]}_anti_small/ --model_target_syn outputs/whisper_slurp_${temp_domain[$SLURM_ARRAY_TASK_ID-1]}_anti_mixed_speech_t5_small_continue/ --domain ${temp_domain[$SLURM_ARRAY_TASK_ID-1]} --weight 0.25
+python test.py --model_syn_anti outputs/whisper_slurp_dpwd__${temp_domain[$SLURM_ARRAY_TASK_ID-1]}_anti_synthetic_speech_t5_small/ --model_anti outputs/whisper_slurp_dpwd__${temp_domain[$SLURM_ARRAY_TASK_ID-1]}_anti_small/ --model_target_syn outputs/whisper_slurp_dpwd__${temp_domain[$SLURM_ARRAY_TASK_ID-1]}_anti_mixed_speech_t5_small_continue/ --domain ${temp_domain[$SLURM_ARRAY_TASK_ID-1]} --weight 0.25
