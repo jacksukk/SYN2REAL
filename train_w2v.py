@@ -10,8 +10,8 @@ import evaluate
 from transformers import TrainingArguments, Trainer, HfArgumentParser
 from datasets import Audio
 from transformers import Wav2Vec2CTCTokenizer
-
-metric = evaluate.load("wer")
+import random
+metric = evaluate.load("wer", experiment_id=str(random.random()))
 import re
 chars_to_ignore_regex = '[\,\?\.\!\-\;\:\"]'
 

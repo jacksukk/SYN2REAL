@@ -3,6 +3,7 @@ from transformers import Wav2Vec2Processor, Wav2Vec2ConformerForCTC, EarlyStoppi
 import torch
 from evaluate import load
 from argparse import ArgumentParser
+import random
 
 # def map_to_pred(batch):
 #     inputs = processor(batch["audio"]["array"], return_tensors="pt", padding="longest")
@@ -71,7 +72,7 @@ if __name__=='__main__':
         args.model_path = 'merge'
     model.config.forced_decoder_ids = None
     result = dataset['test'].map(map_to_pred)
-    wer = load("wer")
+    wer = load("wer", experiment_id=str(random.random()))
     # print(result["prediction"])
     print(args.model_path, 100 * wer.compute(references=result["text"], predictions=result["prediction"]))
 
