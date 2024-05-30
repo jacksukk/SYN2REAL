@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Union
 import evaluate
 from transformers import Seq2SeqTrainingArguments, Seq2SeqTrainer, HfArgumentParser
 from datasets import Audio
-
+import random
 metric = evaluate.load("wer")
 
 # processor = WhisperProcessor.from_pretrained("openai/whisper-small", language="en", task='transcribe')
@@ -101,6 +101,7 @@ if __name__=='__main__':
     parser.add_argument('--mix', type=str, default=None)
     parser.add_argument('--model_path', type=str, default="openai/whisper-small")
     parser.add_argument('--configs', type=str, default="configs/whisper-small.yaml")
+    parser.add_argument('--numbers', type=int, default=17)
     args = parser.parse_args()
     
     print('loading model')
@@ -115,7 +116,7 @@ if __name__=='__main__':
     model.config.suppress_tokens = []
     print('loading data')
     print('train_domains:', args.domains)
-    processor = WhisperProcessor.from_pretrained(args.model_path, task='transcribe', attention_dropout=0.1, mask_time_prob=0.05, cache_dir='/work/b04203058/huggingface_hub')
+    processor = WhisperProcessor.from_pretrained(args.model_path, task='transcribe', cache_dir='/work/b04203058/huggingface_hub')
 
     data_files = {"train":"data/slurp/hg_face_data/data/train/*", "devel":"data/slurp/hg_face_data/data/devel/*"}
     # dataset = load_dataset("marcel-gohsen/slurp", use_auth_token=False, cache_dir="/work/b04203058/huggingface_hub")
@@ -129,17 +130,20 @@ if __name__=='__main__':
             dataset = dataset.filter(lambda example: example["scenario"] in args.domains, load_from_cache_file=False, num_proc=16)
             run_name = run_name + "_" + args.domains[0]
         else:
+
             only = list(SLURP_DOMAIN.difference(set(args.domains)))[0]
-            domain_dict = {d:1 for d in args.domains}
+            selected = random.sample(args.domains, args.numbers)
+            domain_dict = {d:1 for d in selected}
+
             dataset['train'] = dataset['train'].filter(lambda example: example["scenario"] in domain_dict, load_from_cache_file=False, num_proc=16)
             dataset['devel'] = dataset['devel'].filter(lambda example: example["scenario"] in [only], load_from_cache_file=False, num_proc=16)
-            run_name = run_name + "_" + only + '_anti'
+            run_name = run_name + "_" + only + '_anti'+str(args.numbers)
     
     if args.syn == "True":
         print("use synthetic data!!")
-        synthetic_files = {d:f"data/speech_t5/{d}/*" for d in args.domains}
+        synthetic_files = {d:f"data/synthetic/{d}/*" for d in selected}
         syn_dataset = load_dataset("audiofolder", data_files=synthetic_files, cache_dir="/tmp/")
-        syn_dataset = concatenate_datasets([syn_dataset[d] for d in args.domains])
+        syn_dataset = concatenate_datasets([syn_dataset[d] for d in selected])
         syn_dataset = syn_dataset.cast_column("audio", Audio(sampling_rate=16000))
         if args.mix != "True":
             dataset['train'] = syn_dataset
@@ -151,7 +155,7 @@ if __name__=='__main__':
             run_name += "_mixed"
             patience = 100
             training_args.max_steps = 70000
-        run_name += "_speech_t5"
+        # run_name += "_speech_t5"
             
     # run_name += "_subset"
     if "small" in args.model_path:
