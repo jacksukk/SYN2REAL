@@ -142,7 +142,7 @@ if __name__=='__main__':
     if args.syn == "True":
         print("use synthetic data!!")
         synthetic_files = {d:f"data/synthetic/{d}/*" for d in selected}
-        syn_dataset = load_dataset("audiofolder", data_files=synthetic_files, cache_dir="/tmp/")
+        syn_dataset = load_dataset("audiofolder", data_files=synthetic_files, cache_dir="/work/b04203058/huggingface_hub")
         syn_dataset = concatenate_datasets([syn_dataset[d] for d in selected])
         syn_dataset = syn_dataset.cast_column("audio", Audio(sampling_rate=16000))
         if args.mix != "True":
