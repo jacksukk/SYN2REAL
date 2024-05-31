@@ -5,7 +5,7 @@
 #SBATCH --account=MST113025
 #SBATCH -o ./slurm_logs/test/test-%A_%a.out
 #SBATCH --ntasks-per-node=1
-#SBATCH --array=1-4
+#SBATCH --array=1-8
 module purge
 module load miniconda3
 conda activate task_vector
