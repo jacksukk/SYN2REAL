@@ -10,11 +10,11 @@
 module purge
 module load miniconda3
 conda activate task_vector
-export HF_DATASETS_CACHE=/tmp
-export TRANSFORMERS_CACHE=/tmp
-export HF_DATASETS_CACHE=/tmp
-export HUGGINGFACE_HUB_CACHE=/tmp
-export TRANSFORMERS_CACHE=/tmp
+# export HF_DATASETS_CACHE=/tmp
+# export TRANSFORMERS_CACHE=/tmp
+# export HF_DATASETS_CACHE=/tmp
+# export HUGGINGFACE_HUB_CACHE=/tmp
+# export TRANSFORMERS_CACHE=/tmp
 
 domain=('cooking' 'audio' 'transport' 'news' 'music' 'lists' 'weather' 'calendar' 'qa' 'general' 'datetime' 'recommendation' 'play' 'iot' 'social' 'takeaway' 'email' 'alarm')
 multi_target_domain=("music" "music" "music" "music" "music" "music" "music" "music")
