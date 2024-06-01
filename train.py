@@ -9,6 +9,7 @@ import evaluate
 from transformers import Seq2SeqTrainingArguments, Seq2SeqTrainer, HfArgumentParser
 from datasets import Audio
 import random
+random.seed(42)
 metric = evaluate.load("wer")
 
 # processor = WhisperProcessor.from_pretrained("openai/whisper-small", language="en", task='transcribe')
@@ -110,19 +111,19 @@ if __name__=='__main__':
     args.domains = args.domains.split(';')
     args.domains = [d.strip() for d in args.domains if d.strip() != '']
 
-    model = WhisperForConditionalGeneration.from_pretrained(args.model_path, device_map="auto", cache_dir='/work/b04203058/huggingface_hub')
+    model = WhisperForConditionalGeneration.from_pretrained(args.model_path, device_map="auto")
     # model.config.dropout = 0.1
     model.config.forced_decoder_ids = None
     model.config.suppress_tokens = []
     print('loading data')
     print('train_domains:', args.domains)
-    processor = WhisperProcessor.from_pretrained(args.model_path, task='transcribe', cache_dir='/work/b04203058/huggingface_hub')
+    processor = WhisperProcessor.from_pretrained(args.model_path, task='transcribe')
 
     data_files = {"train":"data/slurp/hg_face_data/data/train/*", "devel":"data/slurp/hg_face_data/data/devel/*"}
     # dataset = load_dataset("marcel-gohsen/slurp", use_auth_token=False, cache_dir="/work/b04203058/huggingface_hub")
-    dataset = load_dataset("audiofolder", data_files=data_files, cache_dir="/tmp/")
+    dataset = load_dataset("audiofolder", data_files=data_files)
     dataset = dataset.remove_columns(['split'])
-    run_name = f'whisper_slurp' + '_dpwd_'
+    run_name = f'whisper_slurp'
     training_args = HfArgumentParser(Seq2SeqTrainingArguments).parse_yaml_file(args.configs)[0]
     if args.domains:
         
@@ -130,19 +131,18 @@ if __name__=='__main__':
             dataset = dataset.filter(lambda example: example["scenario"] in args.domains, load_from_cache_file=False, num_proc=16)
             run_name = run_name + "_" + args.domains[0]
         else:
-
             only = list(SLURP_DOMAIN.difference(set(args.domains)))[0]
             selected = random.sample(args.domains, args.numbers)
             domain_dict = {d:1 for d in selected}
 
             dataset['train'] = dataset['train'].filter(lambda example: example["scenario"] in domain_dict, load_from_cache_file=False, num_proc=16)
             dataset['devel'] = dataset['devel'].filter(lambda example: example["scenario"] in [only], load_from_cache_file=False, num_proc=16)
-            run_name = run_name + "_" + only + '_anti'+str(args.numbers)
+            run_name = run_name + "_" + only + '_anti' + str(args.numbers)
     
     if args.syn == "True":
         print("use synthetic data!!")
         synthetic_files = {d:f"data/synthetic/{d}/*" for d in selected}
-        syn_dataset = load_dataset("audiofolder", data_files=synthetic_files, cache_dir="/work/b04203058/huggingface_hub")
+        syn_dataset = load_dataset("audiofolder", data_files=synthetic_files)
         syn_dataset = concatenate_datasets([syn_dataset[d] for d in selected])
         syn_dataset = syn_dataset.cast_column("audio", Audio(sampling_rate=16000))
         if args.mix != "True":
