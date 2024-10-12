@@ -2,7 +2,7 @@
 
 **EMNLP 2024 Main**
 
-[![Paper](https://arxiv.org/abs/2406.02925)]()
+[![Paper](https://img.shields.io/badge/arXiv-PDF-b31b1b)](https://arxiv.org/abs/2406.02925)
 
 Hsuan Su, Hua Farn, Fan-Yun Sun, Shang-Tse Chen, Hung-yi Lee
 
