@@ -121,7 +121,8 @@ if __name__=='__main__':
 
     data_files = {"train":"data/slurp/hg_face_data/data/train/*", "devel":"data/slurp/hg_face_data/data/devel/*"}
     # dataset = load_dataset("marcel-gohsen/slurp", use_auth_token=False, cache_dir="/work/b04203058/huggingface_hub")
-    dataset = load_dataset("audiofolder", data_files=data_files)
+    # dataset = load_dataset("audiofolder", data_files=data_files)
+    dataset = load_dataset('jacksukk/slurp')
     dataset = dataset.remove_columns(['split'])
     run_name = f'whisper_slurp'
     training_args = HfArgumentParser(Seq2SeqTrainingArguments).parse_yaml_file(args.configs)[0]
@@ -181,33 +182,7 @@ if __name__=='__main__':
     training_args.output_dir=f"./outputs/{run_name}"
     # training_args.learning_rate = learning_rate
     training_args.run_name = run_name
-    # training_args = Seq2SeqTrainingArguments(
-    # do_train=True,
-    # overwrite_output_dir=True,
-    # do_eval=True,
-    # output_dir=f"./outputs/{run_name}",  # change to a repo name of your choice
-    # per_device_train_batch_size=16,
-    # gradient_accumulation_steps=1,  # increase by 2x for every 2x decrease in batch size
-    # learning_rate=learning_rate,
-    # run_name=run_name,
-    # warmup_steps=500,
-    # max_steps=steps,
-    # gradient_checkpointing=True,
-    # fp16=True,
-    # evaluation_strategy="steps",
-    # per_device_eval_batch_size=8,
-    # predict_with_generate=True,
-    # generation_max_length=225,
-    # save_steps=50,
-    # eval_steps=50,
-    # logging_steps=25,
-    # report_to=["wandb"],
-    # load_best_model_at_end=True,
-    # metric_for_best_model="wer",
-    # greater_is_better=False,
-    # push_to_hub=False,
-    # save_total_limit=2,
-    # )
+
 
     trainer = Seq2SeqTrainer(
     args=training_args,

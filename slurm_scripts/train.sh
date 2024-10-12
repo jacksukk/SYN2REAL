@@ -10,11 +10,7 @@
 module purge
 module load miniconda3
 conda activate task_vector
-export HF_DATASETS_CACHE=/tmp
-export TRANSFORMERS_CACHE=/tmp
-export HF_DATASETS_CACHE=/tmp
-export HUGGINGFACE_HUB_CACHE=/tmp
-export TRANSFORMERS_CACHE=/tmp
+
 
 domain=('cooking' 'audio' 'transport' 'news' 'music' 'lists' 'weather' 'calendar' 'qa' 'general' 'datetime' 'recommendation' 'play' 'iot' 'social' 'takeaway' 'email' 'alarm')
 multi_target_domain=("weather" "cooking" "social" "music")
@@ -41,11 +37,5 @@ done
 # syn=("True" "True");
 
 echo ${final_train_domain[2]};
-# torchrun --nproc_per_node 2 train.py;
-# sleep $(((SLURM_ARRAY_TASK_ID-1)*120));
-# if [ $SLURM_ARRAY_TASK_ID == 3 ] || [ $SLURM_ARRAY_TASK_ID == 5 ] || [ $SLURM_ARRAY_TASK_ID == 7 ]; then
-    # echo $SLURM_ARRAY_TASK_ID;
+
 python train.py --domains "${final_train_domain[$SLURM_ARRAY_TASK_ID-1]}" --syn "${syn[$SLURM_ARRAY_TASK_ID-1]}" --model_path openai/whisper-small --configs configs/whisper_small.yaml;
-# fi
-# python train.py --domains "${final_train_domain[$SLURM_ARRAY_TASK_ID-1]}" --syn "${syn[$SLURM_ARRAY_TASK_ID-1]}" --model_path openai/whisper-tiny --configs configs/whisper_tiny.yaml;
-# python train_origin.py;
