@@ -22,7 +22,8 @@ Synthesize speech given text from SLURP dataset with BARK model
 $ source slurm_scripts/generate.sh
 ```
 
-### ASR training
+### ASR Training
+
 #### Train pretrained ASR models with source/target domain real and synthetic data
 
 ```
